@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#10111b"><link rel="manifest" href="./manifest.json"><link rel="apple-touch-icon" href="./icon-192.png"><title>HERO Card Binder</title>
+<meta name="theme-color" content="#10111b"><title>HERO Card Binder</title>
 <style>
 :root{color-scheme:dark;--bg:#10111b;--panel:#191b29;--panel2:#202337;--text:#f5f5fb;--muted:#a8abc1;--line:#34374d;--gold:#f0b84b;--mint:#7fe0c3;--pink:#f18bb7}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select{font:inherit}button{cursor:pointer}.app{min-height:100vh;background:radial-gradient(ellipse at 80% -10%,#303154 0,transparent 38%),var(--bg)}header{padding:22px 16px 14px;max-width:980px;margin:auto}.eyebrow{color:var(--gold);font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.title{font-size:clamp(27px,6vw,42px);line-height:1.05;margin:8px 0;font-weight:900;letter-spacing:-.04em}.title span{color:var(--gold)}.subtitle{color:var(--muted);max-width:660px;font-size:13px}.wrap{max-width:980px;margin:auto;padding:0 14px 36px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}.stat b{font-size:22px;display:block}.stat small{color:var(--muted);font-size:11px}.progress{height:7px;background:#303248;border-radius:99px;overflow:hidden;margin-top:9px}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--mint));width:0%}.toolbar{position:sticky;top:0;z-index:4;background:#10111bf2;backdrop-filter:blur(12px);padding:10px 0;border-bottom:1px solid var(--line)}.searchrow{display:flex;gap:8px}.searchrow input{flex:1;min-width:0}.control{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:11px;padding:11px 12px;outline:none;width:100%}.control:focus{border-color:var(--gold)}.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;padding:9px 11px;font-weight:650;font-size:12px}.btn.primary{background:var(--gold);color:#241a08;border-color:var(--gold)}.btn:active{transform:scale(.98)}.listhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:17px 2px 10px;color:var(--muted);font-size:12px}.cards{display:grid;gap:8px}.card{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:13px;transition:.15s}.card.owned{border-color:#477c70;background:linear-gradient(100deg,#18302e,var(--panel) 58%)}.check{appearance:none;width:24px;height:24px;border:2px solid #686d88;border-radius:7px;margin:0;display:grid;place-items:center;cursor:pointer}.check:checked{background:var(--mint);border-color:var(--mint)}.check:checked:after{content:'✓';font-weight:900;color:#10201c}.name{font-weight:750;font-size:14px;overflow-wrap:anywhere}.sub{font-size:11px;color:var(--muted);margin-top:3px}.tag{font-size:10px;border-radius:6px;padding:4px 6px;background:#2c2f45;color:#d8d9eb;white-space:nowrap}.owned .tag{background:#24594e;color:#b4f7e4}.empty{padding:32px 14px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}.notice{font-size:11px;color:var(--muted);padding:16px 2px;line-height:1.6}.notice a{color:var(--gold)}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#f0b84b;color:#241a08;padding:10px 15px;border-radius:10px;font-weight:700;font-size:12px;box-shadow:0 8px 30px #0008;display:none;z-index:10}.footer{color:#71758e;text-align:center;font-size:10px;padding:18px}@media(min-width:650px){.filters{grid-template-columns:repeat(4,1fr)}.cards{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(3,1fr)}.card{min-height:80px}}@media(max-width:380px){.tag{display:none}.stat{padding:9px}.stat b{font-size:19px}}
 </style>
@@ -15,18 +15,7 @@
 <section class="stats"><div class="stat"><b id="ownedCount">0</b><small>Cartas conseguidas</small></div><div class="stat"><b id="totalCount">0</b><small>Cartas en la lista</small></div><div class="stat"><b id="percent">0%</b><small>Completado</small><div class="progress"><i id="bar"></i></div></div></section>
 <div class="toolbar"><div class="searchrow"><input class="control" id="search" placeholder="Buscar carta por nombre…" aria-label="Buscar carta"><button class="btn" id="clearSearch">Limpiar</button></div><div class="filters"><select class="control" id="family"><option value="">Todas las familias</option></select><select class="control" id="type"><option value="">Todos los tipos</option><option>Monstruo · Deck Principal</option><option>Monstruo · Extra Deck</option><option>Mágica</option><option>Trampa</option></select><select class="control" id="status"><option value="all">Todas las cartas</option><option value="owned">Ya las tengo</option><option value="missing">Me faltan</option></select><select class="control" id="sort"><option value="name">Orden alfabético</option><option value="family">Por familia</option><option value="type">Por tipo</option><option value="missing">Pendientes primero</option></select></div><div class="actions"><button class="btn primary" id="export">Exportar respaldo</button><button class="btn" id="importBtn">Importar respaldo</button><button class="btn" id="csv">Descargar CSV</button><button class="btn" id="reset">Desmarcar todo</button><input id="file" type="file" accept="application/json,.json" hidden></div></div>
 <section style="margin:14px 0;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px"><b style="display:block;margin-bottom:4px">＋ Añadir carta que te falta</b><div style="font-size:12px;color:var(--muted);margin-bottom:10px">Agrega cartas a tu lista. Se guardarán en este navegador y seguirán ahí al volver a abrir la app.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="control" id="newName" placeholder="Nombre de la carta" aria-label="Nombre de la carta"><input class="control" id="newFamily" placeholder="Familia (ej. Elemental HERO)" aria-label="Familia de la carta"><select class="control" id="newType" aria-label="Tipo de carta" style="grid-column:1/-1"><option>Monstruo · Deck Principal</option><option>Monstruo · Extra Deck</option><option>Mágica</option><option>Trampa</option></select></div><button class="btn primary" id="addCard" style="margin-top:8px;width:100%">Agregar a mi checklist</button></section>
-<section style="margin:12px 0;padding:14px;background:var(--panel);border:1px solid #744451;border-radius:14px">
-  <b style="display:block;margin-bottom:4px">🗑️ Eliminar una familia que creaste</b>
-  <div style="font-size:12px;color:var(--muted);margin-bottom:10px">
-    Selecciona una familia personalizada para borrar también las cartas que agregaste dentro de ella.
-  </div>
-  <select class="control" id="customFamilyToDelete" aria-label="Familia personalizada que quieres eliminar">
-    <option value="">Selecciona tu familia</option>
-  </select>
-  <button class="btn" id="deleteCustomFamily" type="button" style="margin-top:8px;width:100%;border-color:#744451;background:#3a202b;color:#ffc3d1">
-    Eliminar familia seleccionada
-  </button>
-</section>
+<section style="margin:12px 0;padding:14px;background:var(--panel);border:1px solid #744451;border-radius:14px"><b style="display:block;margin-bottom:4px">🗑️ Eliminar una familia que creaste</b><div style="font-size:12px;color:var(--muted);margin-bottom:10px">Selecciona una familia personalizada para borrar también las cartas que agregaste dentro de ella.</div><select class="control" id="customFamilyToDelete" aria-label="Familia personalizada que quieres eliminar"><option value="">Selecciona tu familia</option></select><button class="btn" id="deleteCustomFamily" type="button" style="margin-top:8px;width:100%;border-color:#744451;background:#3a202b;color:#ffc3d1">Eliminar familia seleccionada</button></section>
 <div class="listhead"><span id="shown">Mostrando 0 cartas</span><span id="hint">Toca la casilla para marcar</span></div><section id="cards" class="cards" aria-live="polite"></section>
 <div class="notice"><b>Sobre los nombres:</b> se muestran nombres de cartas en inglés para que sean fáciles de buscar en catálogos internacionales. Las traducciones españolas individuales no se rellenan cuando no se han podido verificar, para evitar inventar nombres. La lista es una base amplia de colección y no una garantía de todas las cartas promocionales o de futuras publicaciones. Verifica cada carta en la <a href="https://www.db.yugioh-card.com/yugiohdb/card_search.action?request_locale=en" target="_blank" rel="noopener">base oficial de cartas de Konami</a>.<br><br><b>Privacidad:</b> las marcas se guardan localmente en este navegador mediante almacenamiento del dispositivo. Exporta un respaldo para transferir tu colección o conservarla al cambiar de celular.</div>
 <div class="footer">HERO CARD BINDER · colección personal</div>
@@ -61,129 +50,44 @@ function render(){let arr=cards.filter(c=>{const q=$('search').value.trim().toLo
 const DELETED_KEY='heroCardBinderDeletedCards_v1';let deletedNames=[];try{deletedNames=JSON.parse(localStorage.getItem(DELETED_KEY)||'[]')}catch(e){deletedNames=[]}for(const n of deletedNames){const i=cards.findIndex(c=>c.name.toLowerCase()===String(n).toLowerCase());if(i>=0){owned.delete(cards[i].id);cards.splice(i,1)}}
 const renderWithoutDelete=render;render=function(){renderWithoutDelete();document.querySelectorAll('#cards .card').forEach(el=>{if(el.querySelector('.delete-card'))return;const title=el.querySelector('.name');if(!title)return;const name=title.textContent;const c=cards.find(x=>x.name===name);if(!c)return;const b=document.createElement('button');b.type='button';b.className='delete-card';b.textContent='Eliminar';b.setAttribute('aria-label','Eliminar '+name+' de la checklist');b.addEventListener('click',ev=>{ev.preventDefault();ev.stopPropagation();if(!confirm('¿Eliminar «'+name+'» de tu checklist?'+(c.id.startsWith('custom:')?' Esta carta personalizada se borrará.':' La carta se ocultará de tu lista en este dispositivo.')))return;owned.delete(c.id);if(c.id.startsWith('custom:')){customCards=customCards.filter(x=>String(x.name).toLowerCase()!==name.toLowerCase());try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customCards))}catch(e){toast('No se pudo guardar el cambio')}}else{if(!deletedNames.some(x=>String(x).toLowerCase()===name.toLowerCase()))deletedNames.push(name);try{localStorage.setItem(DELETED_KEY,JSON.stringify(deletedNames))}catch(e){toast('No se pudo guardar el cambio')}}const i=cards.findIndex(x=>x.id===c.id);if(i>=0)cards.splice(i,1);save();render();toast('Carta eliminada de la checklist')});el.appendChild(b)})};
 render();
-</script><script>
-// Instalación PWA y soporte sin conexión.
-(()=>{
-  let installEvent=null;
-  const btn=document.getElementById('installApp');
-  const help=document.getElementById('installHelp');
-  window.addEventListener('beforeinstallprompt',e=>{
-    e.preventDefault(); installEvent=e;
-    help.textContent='Tu navegador permite instalarla directamente.';
-    btn.textContent='Instalar app';
-  });
-  window.addEventListener('appinstalled',()=>{
-    help.textContent='¡HERO Card Binder está instalada!'; btn.hidden=true;
-  });
-  btn.addEventListener('click',async()=>{
-    if(installEvent){
-      installEvent.prompt(); await installEvent.userChoice; installEvent=null;
-    } else {
-      help.textContent='En Chrome: toca ⋮ y elige “Instalar aplicación” o “Añadir a pantalla de inicio”. Si no aparece, espera a que GitHub Pages publique la página y vuelve a abrirla.';
-    }
-  });
-  if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')){
-    window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-  }
-  if(window.matchMedia('(display-mode: standalone)').matches){
-    help.textContent='La aplicación ya está instalada.'; btn.hidden=true;
-  }
-})();
+</script>
 <script>
-(() => {
-  const familySelect = document.getElementById('customFamilyToDelete');
-  const deleteButton = document.getElementById('deleteCustomFamily');
-
-  if (!familySelect || !deleteButton) return;
-
-  function refreshFamilyChoices() {
-    const selected = familySelect.value;
-    familySelect.innerHTML = '<option value="">Selecciona tu familia</option>';
-
-    const names = [...new Set(
-      customCards.map(c => String(c.family || 'Otras cartas')).filter(Boolean)
-    )].sort((a, b) => a.localeCompare(b, 'es'));
-
-    for (const family of names) {
-      const option = document.createElement('option');
-      option.value = family;
-      option.textContent = family;
-      familySelect.appendChild(option);
-    }
-
-    if (names.includes(selected)) familySelect.value = selected;
-
-    deleteButton.disabled = names.length === 0;
-    deleteButton.style.opacity = names.length === 0 ? '.55' : '1';
+// Administrar familias personalizadas desde el panel visible.
+(()=>{
+  const familySelect=document.getElementById('customFamilyToDelete');
+  const deleteButton=document.getElementById('deleteCustomFamily');
+  if(!familySelect||!deleteButton)return;
+  function refreshFamilyChoices(){
+    const selected=familySelect.value;
+    familySelect.innerHTML='<option value="">Selecciona tu familia</option>';
+    const names=[...new Set(customCards.map(c=>String(c.family||'Otras cartas')).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+    for(const family of names){const option=document.createElement('option');option.value=family;option.textContent=family;familySelect.appendChild(option)}
+    if(names.includes(selected))familySelect.value=selected;
+    deleteButton.disabled=names.length===0;
+    deleteButton.style.opacity=names.length===0?'.55':'1';
   }
-
-  deleteButton.addEventListener('click', () => {
-    const family = familySelect.value;
-
-    if (!family || !customCards.some(
-      c => String(c.family || 'Otras cartas') === family
-    )) {
-      toast('Selecciona una familia que hayas creado');
-      return;
-    }
-
-    if (!confirm(
-      '¿Eliminar la familia «' + family +
-      '» y todas las cartas personalizadas que agregaste dentro de ella? Esta acción no se puede deshacer.'
-    )) return;
-
-    const ids = cards
-      .filter(c => c.id.startsWith('custom:') &&
-        String(c.family || 'Otras cartas') === family)
-      .map(c => c.id);
-
-    for (const id of ids) owned.delete(id);
-
-    customCards = customCards.filter(
-      c => String(c.family || 'Otras cartas') !== family
-    );
-
-    for (let i = cards.length - 1; i >= 0; i--) {
-      if (cards[i].id.startsWith('custom:') &&
-          String(cards[i].family || 'Otras cartas') === family) {
-        cards.splice(i, 1);
-      }
-    }
-
-    try {
-      localStorage.setItem(CUSTOM_KEY, JSON.stringify(customCards));
-      localStorage.setItem(KEY, JSON.stringify([...owned]));
-    } catch (e) {
-      toast('No se pudo guardar el cambio');
-      return;
-    }
-
-    const filter = document.getElementById('family');
-    for (const option of [...filter.options]) {
-      if (option.value === family) option.remove();
-    }
-
-    if (filter.value === family) filter.value = '';
-
-    familySelect.value = '';
-    refreshFamilyChoices();
-    render();
-    toast('Familia personalizada eliminada');
+  deleteButton.addEventListener('click',()=>{
+    const family=familySelect.value;
+    if(!family||!customCards.some(c=>String(c.family||'Otras cartas')===family)){toast('Selecciona una familia que hayas creado');return}
+    if(!confirm('¿Eliminar la familia «'+family+'» y todas las cartas personalizadas que agregaste dentro de ella? Esta acción no se puede deshacer.'))return;
+    const ids=cards.filter(c=>c.id.startsWith('custom:')&&String(c.family||'Otras cartas')===family).map(c=>c.id);
+    for(const id of ids)owned.delete(id);
+    customCards=customCards.filter(c=>String(c.family||'Otras cartas')!==family);
+    for(let i=cards.length-1;i>=0;i--){if(cards[i].id.startsWith('custom:')&&String(cards[i].family||'Otras cartas')===family)cards.splice(i,1)}
+    try{localStorage.setItem(CUSTOM_KEY,JSON.stringify(customCards));localStorage.setItem(KEY,JSON.stringify([...owned]))}catch(e){toast('No se pudo guardar el cambio');return}
+    const filter=$('family');for(const option of [...filter.options])if(option.value===family)option.remove();
+    if(filter.value===family)filter.value='';
+    familySelect.value='';refreshFamilyChoices();render();toast('Familia personalizada eliminada');
   });
-
-  const originalAddCard = document.getElementById('addCard').onclick;
-  document.getElementById('addCard').onclick = function () {
-    originalAddCard();
-    refreshFamilyChoices();
-  };
-
-  const originalFileChange = document.getElementById('file').onchange;
-  document.getElementById('file').onchange = async function (e) {
-    await originalFileChange(e);
-    refreshFamilyChoices();
-  };
-
+  const originalAddCard=$('addCard').onclick;
+  $('addCard').onclick=function(){originalAddCard();refreshFamilyChoices()};
+  const originalFileChange=$('file').onchange;
+  $('file').onchange=async function(e){await originalFileChange(e);refreshFamilyChoices()};
   refreshFamilyChoices();
 })();
 </script>
+<script>
+// Instalación PWA cuando el sitio se sirve desde HTTPS. El modo sin conexión
+// requiere además un service worker publicado junto a esta página.
+(()=>{const icon='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#10111b"/><path d="M95 110h322v292H95z" fill="#202337" stroke="#f0b84b" stroke-width="18"/><path d="M150 170h210M150 225h210M150 280h140" stroke="#7fe0c3" stroke-width="20" stroke-linecap="round"/><text x="256" y="365" font-size="62" font-weight="900" text-anchor="middle" fill="#f0b84b">HERO</text></svg>');const manifest={id:location.pathname,start_url:location.href,scope:location.origin+'/',name:'HERO Card Binder',short_name:'HERO Binder',description:'Checklist personal de cartas HERO y Yu-Gi-Oh!',display:'standalone',background_color:'#10111b',theme_color:'#10111b',icons:[{src:icon,sizes:'any',type:'image/svg+xml',purpose:'any maskable'}]};try{const link=document.createElement('link');link.rel='manifest';link.href=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'}));document.head.appendChild(link)}catch(e){}let installEvent=null;const btn=document.getElementById('installApp'),help=document.getElementById('installHelp');window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvent=e;help.textContent='Tu navegador permite instalarla directamente.';btn.textContent='Instalar app'});window.addEventListener('appinstalled',()=>{help.textContent='¡HERO Card Binder está instalada!';btn.hidden=true});btn.addEventListener('click',async()=>{if(installEvent){installEvent.prompt();await installEvent.userChoice;installEvent=null}else{help.textContent='En Chrome: toca ⋮ y elige “Instalar aplicación” o “Añadir a pantalla de inicio”. Si no aparece, abre esta página desde una dirección HTTPS publicada; un archivo HTML local no se puede instalar como PWA.'}});if(location.protocol!=='https:'&&location.hostname!=='localhost'){help.textContent='Para instalarla como app, esta página debe estar publicada en una dirección HTTPS.';btn.textContent='Cómo instalar'}if(window.matchMedia('(display-mode: standalone)').matches){help.textContent='La aplicación ya está instalada.';btn.hidden=true}})();
 </script></body></html>

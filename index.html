@@ -15,6 +15,18 @@
 <section class="stats"><div class="stat"><b id="ownedCount">0</b><small>Cartas conseguidas</small></div><div class="stat"><b id="totalCount">0</b><small>Cartas en la lista</small></div><div class="stat"><b id="percent">0%</b><small>Completado</small><div class="progress"><i id="bar"></i></div></div></section>
 <div class="toolbar"><div class="searchrow"><input class="control" id="search" placeholder="Buscar carta por nombre…" aria-label="Buscar carta"><button class="btn" id="clearSearch">Limpiar</button></div><div class="filters"><select class="control" id="family"><option value="">Todas las familias</option></select><select class="control" id="type"><option value="">Todos los tipos</option><option>Monstruo · Deck Principal</option><option>Monstruo · Extra Deck</option><option>Mágica</option><option>Trampa</option></select><select class="control" id="status"><option value="all">Todas las cartas</option><option value="owned">Ya las tengo</option><option value="missing">Me faltan</option></select><select class="control" id="sort"><option value="name">Orden alfabético</option><option value="family">Por familia</option><option value="type">Por tipo</option><option value="missing">Pendientes primero</option></select></div><div class="actions"><button class="btn primary" id="export">Exportar respaldo</button><button class="btn" id="importBtn">Importar respaldo</button><button class="btn" id="csv">Descargar CSV</button><button class="btn" id="reset">Desmarcar todo</button><input id="file" type="file" accept="application/json,.json" hidden></div></div>
 <section style="margin:14px 0;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px"><b style="display:block;margin-bottom:4px">＋ Añadir carta que te falta</b><div style="font-size:12px;color:var(--muted);margin-bottom:10px">Agrega cartas a tu lista. Se guardarán en este navegador y seguirán ahí al volver a abrir la app.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><input class="control" id="newName" placeholder="Nombre de la carta" aria-label="Nombre de la carta"><input class="control" id="newFamily" placeholder="Familia (ej. Elemental HERO)" aria-label="Familia de la carta"><select class="control" id="newType" aria-label="Tipo de carta" style="grid-column:1/-1"><option>Monstruo · Deck Principal</option><option>Monstruo · Extra Deck</option><option>Mágica</option><option>Trampa</option></select></div><button class="btn primary" id="addCard" style="margin-top:8px;width:100%">Agregar a mi checklist</button></section>
+<section style="margin:12px 0;padding:14px;background:var(--panel);border:1px solid #744451;border-radius:14px">
+  <b style="display:block;margin-bottom:4px">🗑️ Eliminar una familia que creaste</b>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:10px">
+    Selecciona una familia personalizada para borrar también las cartas que agregaste dentro de ella.
+  </div>
+  <select class="control" id="customFamilyToDelete" aria-label="Familia personalizada que quieres eliminar">
+    <option value="">Selecciona tu familia</option>
+  </select>
+  <button class="btn" id="deleteCustomFamily" type="button" style="margin-top:8px;width:100%;border-color:#744451;background:#3a202b;color:#ffc3d1">
+    Eliminar familia seleccionada
+  </button>
+</section>
 <div class="listhead"><span id="shown">Mostrando 0 cartas</span><span id="hint">Toca la casilla para marcar</span></div><section id="cards" class="cards" aria-live="polite"></section>
 <div class="notice"><b>Sobre los nombres:</b> se muestran nombres de cartas en inglés para que sean fáciles de buscar en catálogos internacionales. Las traducciones españolas individuales no se rellenan cuando no se han podido verificar, para evitar inventar nombres. La lista es una base amplia de colección y no una garantía de todas las cartas promocionales o de futuras publicaciones. Verifica cada carta en la <a href="https://www.db.yugioh-card.com/yugiohdb/card_search.action?request_locale=en" target="_blank" rel="noopener">base oficial de cartas de Konami</a>.<br><br><b>Privacidad:</b> las marcas se guardan localmente en este navegador mediante almacenamiento del dispositivo. Exporta un respaldo para transferir tu colección o conservarla al cambiar de celular.</div>
 <div class="footer">HERO CARD BINDER · colección personal</div>
@@ -77,4 +89,101 @@ render();
     help.textContent='La aplicación ya está instalada.'; btn.hidden=true;
   }
 })();
+<script>
+(() => {
+  const familySelect = document.getElementById('customFamilyToDelete');
+  const deleteButton = document.getElementById('deleteCustomFamily');
+
+  if (!familySelect || !deleteButton) return;
+
+  function refreshFamilyChoices() {
+    const selected = familySelect.value;
+    familySelect.innerHTML = '<option value="">Selecciona tu familia</option>';
+
+    const names = [...new Set(
+      customCards.map(c => String(c.family || 'Otras cartas')).filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b, 'es'));
+
+    for (const family of names) {
+      const option = document.createElement('option');
+      option.value = family;
+      option.textContent = family;
+      familySelect.appendChild(option);
+    }
+
+    if (names.includes(selected)) familySelect.value = selected;
+
+    deleteButton.disabled = names.length === 0;
+    deleteButton.style.opacity = names.length === 0 ? '.55' : '1';
+  }
+
+  deleteButton.addEventListener('click', () => {
+    const family = familySelect.value;
+
+    if (!family || !customCards.some(
+      c => String(c.family || 'Otras cartas') === family
+    )) {
+      toast('Selecciona una familia que hayas creado');
+      return;
+    }
+
+    if (!confirm(
+      '¿Eliminar la familia «' + family +
+      '» y todas las cartas personalizadas que agregaste dentro de ella? Esta acción no se puede deshacer.'
+    )) return;
+
+    const ids = cards
+      .filter(c => c.id.startsWith('custom:') &&
+        String(c.family || 'Otras cartas') === family)
+      .map(c => c.id);
+
+    for (const id of ids) owned.delete(id);
+
+    customCards = customCards.filter(
+      c => String(c.family || 'Otras cartas') !== family
+    );
+
+    for (let i = cards.length - 1; i >= 0; i--) {
+      if (cards[i].id.startsWith('custom:') &&
+          String(cards[i].family || 'Otras cartas') === family) {
+        cards.splice(i, 1);
+      }
+    }
+
+    try {
+      localStorage.setItem(CUSTOM_KEY, JSON.stringify(customCards));
+      localStorage.setItem(KEY, JSON.stringify([...owned]));
+    } catch (e) {
+      toast('No se pudo guardar el cambio');
+      return;
+    }
+
+    const filter = document.getElementById('family');
+    for (const option of [...filter.options]) {
+      if (option.value === family) option.remove();
+    }
+
+    if (filter.value === family) filter.value = '';
+
+    familySelect.value = '';
+    refreshFamilyChoices();
+    render();
+    toast('Familia personalizada eliminada');
+  });
+
+  const originalAddCard = document.getElementById('addCard').onclick;
+  document.getElementById('addCard').onclick = function () {
+    originalAddCard();
+    refreshFamilyChoices();
+  };
+
+  const originalFileChange = document.getElementById('file').onchange;
+  document.getElementById('file').onchange = async function (e) {
+    await originalFileChange(e);
+    refreshFamilyChoices();
+  };
+
+  refreshFamilyChoices();
+})();
+</script>
 </script></body></html>
